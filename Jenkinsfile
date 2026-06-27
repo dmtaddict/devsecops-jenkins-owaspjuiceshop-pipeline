@@ -157,7 +157,10 @@ pipeline {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     container('syft') {
-                        sh script:'/syft vuln_app -o cyclonedx-json=reports/sbom-report.json', shell: '/busybox/sh'
+                        sh '''
+                            /syft vuln_app \
+                                -o cyclonedx-json=reports/sbom-report.json
+                        '''
                     }
                 echo "Генерация SBOM отчёта завершена."
                 }
@@ -169,7 +172,9 @@ pipeline {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     container('grype') {
-                        sh script:'/grype reports/sbom-report.json -o json > reports/grype-report.json', shell: '/busybox/sh'
+                        sh '''
+                            /grype reports/sbom-report.json -o json > reports/grype-report.json
+                        '''
                         echo 'SCA сканирование с помощью Grype завершено'
                     }
                 }
