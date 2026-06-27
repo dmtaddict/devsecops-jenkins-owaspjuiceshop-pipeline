@@ -79,7 +79,7 @@ pipeline {
                             container('gitleaks') {
                                 sh '''
                                     gitleaks detect \
-                                    --source=/gitleaks \
+                                    --source=vuln_app \
                                     --report-format=json \
                                     --report-path=reports/gitleaks-report.json \
                                     --exit-code=0
@@ -116,13 +116,15 @@ pipeline {
             when { expression { params.RUN_NPM_AUDIT } }
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-                    sh '''
-                        cd vuln_app
-                        npm install --package-lock-only --ignore-scripts 2>/dev/null
-                        npm audit --json --package-lock-only > ../reports/npm-audit.json || true
-                        cd ..
-                    '''
-                    echo 'SCA - npm audit завершен'
+                    container('npm') {
+                        sh '''
+                            cd vuln_app
+                            npm install --package-lock-only --ignore-scripts 2>/dev/null
+                            npm audit --json --package-lock-only > ../reports/npm-audit.json || true
+                            cd ..
+                        '''
+                        echo 'SCA - npm audit завершен'
+                    }
                 }
             }
         }
@@ -156,7 +158,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     container('syft') {
                         sh '''
-                            syft vuln_app \
+                            /syft vuln_app \
                                 -o cyclonedx-json=reports/sbom-report.json
                         '''
                     }
@@ -171,7 +173,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     container('grype') {
                         sh '''
-                            grype sbom:reports/sbom-report.json \
+                            /grype sbom:reports/sbom-report.json \
                                 -o json > reports/grype-report.json
                         '''
                         echo 'SCA сканирование с помощью Grype завершено'
@@ -455,7 +457,7 @@ CRITICAL CVE     : ${fmt(R.depCrit)}  (порог: ${DEPCHECK_CRIT_MAX})   ${ico
                     'reports/zap-report.json'
                 ].join(', '),
                 allowEmptyArchive: true
-            )
+            ) 
         }
         success { echo 'Пайплайн прошёл все проверки успешно' }
         unstable {
