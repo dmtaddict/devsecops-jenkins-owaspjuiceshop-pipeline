@@ -118,6 +118,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     container('npm') {
                         sh '''
+                            apk add --no-cache git
                             cd vuln_app
                             npm install --package-lock-only --ignore-scripts && npm audit --json --package-lock-only > ../reports/npm-audit.json
                             cd ..
