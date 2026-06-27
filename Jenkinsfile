@@ -247,7 +247,7 @@ print("Dockerfile пропатчен успешно")
                                 --severity HIGH,CRITICAL \
                                 --exit-code 0 \
                                 --format json \
-                                -o /reports/trivy-image-report.json \
+                                -o reports/trivy-image-report.json \
                                 ${IMAGE_NAME}:${IMAGE_TAG}
                         '''
                         echo 'Сканирование Docker-образа с помощью Trivy завершен'
