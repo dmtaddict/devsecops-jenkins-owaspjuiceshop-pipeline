@@ -456,7 +456,6 @@ CRITICAL CVE     : ${fmt(R.depCrit)}  (порог: ${DEPCHECK_CRIT_MAX})   ${ico
                 ].join(', '),
                 allowEmptyArchive: true
             )
-            kubectl delete -f juice-shop/ 
         }
         success { echo 'Пайплайн прошёл все проверки успешно' }
         unstable {
