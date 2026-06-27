@@ -20,7 +20,7 @@ spec:
     command: ["sh", "-c", "clear; tail -f /dev/null"]
     tty: true
 
-    - name: npm
+  - name: npm
     image: node:20-alpine
     command: ["sh", "-c", "clear; tail -f /dev/null"]
     tty: true
