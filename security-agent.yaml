@@ -26,11 +26,13 @@ spec:
 
   - name: syft
     image: anchore/syft:v1.22.0
-    command: ["/syft", "serve"]
+    command: ["/sh"]
+    args: ["-c", "tty && cat"]
 
   - name: grype
-    image: anchore/grype:v0.114.0-alpine
-    command: ["cat"]
+    image: anchore/grype:v0.114.0-nonroot
+    command: ["/sh"]
+    args: ["-c", "tty && cat"]
 
   - name: kaniko
     image: gcr.io/kaniko-project/executor:v1.23.2-debug
