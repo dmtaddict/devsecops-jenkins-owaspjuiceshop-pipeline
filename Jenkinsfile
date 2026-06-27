@@ -119,7 +119,7 @@ pipeline {
                     container('npm') {
                         sh '''
                             cd vuln_app
-                            npm install --package-lock-only --ignore-scripts 2>/dev/null
+                            #npm install --package-lock-only --ignore-scripts 2>/dev/null
                             npm audit --json --package-lock-only > ../reports/npm-audit.json || true
                             cd ..
                         '''
@@ -173,8 +173,7 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     container('grype') {
                         sh '''
-                            /grype sbom:reports/sbom-report.json \
-                                -o json > reports/grype-report.json
+                            /grype reports/sbom-report.json -o json > reports/grype-report.json
                         '''
                         echo 'SCA сканирование с помощью Grype завершено'
                     }
