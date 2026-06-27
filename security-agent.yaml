@@ -31,6 +31,9 @@ spec:
     - sleep
     args:
     - 999999
+    volumeMounts:
+    - name: dc-cache
+      mountPath: /usr/share/dependency-check/data
 
   - name: syft
     image: anchore/syft:v1.22.0
@@ -59,6 +62,9 @@ spec:
     - sleep
     args:
     - 999999
+    volumeMounts:
+    - name: trivy-cache
+      mountPath: /root/.cache/trivy
 
   - name: zap
     image: ghcr.io/zaproxy/zaproxy:2.16.1
@@ -67,24 +73,11 @@ spec:
     args:
     - 999999
 
-volumeMounts:
-
-    - name: dc-cache
-      mountPath: /usr/share/dependency-check/data
-
-    - name: trivy-cache
-      mountPath: /root/.cache/trivy 
-
-volumes:
-
-  - name: dc-cache
-
-    persistentVolumeClaim:
-
-      claimName: dependency-check-cache
-
-  - name: trivy-cache
-
-    persistentVolumeClaim:
-
-      claimName: trivy-cache
+    volumes:
+      - name: dc-cache
+        persistentVolumeClaim:
+          claimName: dependency-check-cache
+      
+      - name: trivy-cache
+        persistentVolumeClaim:
+          claimName: trivy-cache
