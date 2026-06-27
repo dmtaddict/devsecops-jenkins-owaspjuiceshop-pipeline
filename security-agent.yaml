@@ -5,56 +5,43 @@ metadata:
     role: jenkins-agent
 spec:
   containers:
+  # Этот контейнер гарантирует, что под будет жить столько, сколько нужно пайплайну
+  - name: pause-agent
+    image: alpine:3.18
+    command: ["sh", "-c", "trap 'exit 0' SIGTERM; while true; do sleep 30; done"]
+
   - name: trufflehog
     image: trufflesecurity/trufflehog:3.88.0
-    command: ["cat"]
-    tty: true
     
   - name: gitleaks
     image: zricethezav/gitleaks:v8.24.2
-    command: ["cat"]
-    tty: true
 
   - name: semgrep
     image: semgrep/semgrep:1.114.0
-    command: ["cat"]
-    tty: true
 
   - name: dependency-check
     image: owasp/dependency-check:12.1.0
-    command: ["cat"]
-    tty: true
     volumeMounts:
     - name: dc-cache
       mountPath: /usr/share/dependency-check/data
 
   - name: syft
     image: anchore/syft:v1.22.0
-    command: ["/syft", "scan", "stdin:"]
-    tty: true
 
   - name: grype
     image: anchore/grype:v0.114.0-nonroot
-    command: ["/grype", "scan", "-"]
-    tty: true
 
   - name: kaniko
     image: gcr.io/kaniko-project/executor:v1.23.2-debug
-    command: ["cat"]
-    tty: true
 
   - name: trivy
     image: aquasec/trivy:0.61.0
-    command: ["cat"]
-    tty: true
     volumeMounts:
     - name: trivy-cache
       mountPath: /root/.cache/trivy 
 
   - name: zap
     image: ghcr.io/zaproxy/zaproxy:2.16.1
-    command: ["cat"]
-    tty: true
 
   volumes:
   - name: dc-cache
