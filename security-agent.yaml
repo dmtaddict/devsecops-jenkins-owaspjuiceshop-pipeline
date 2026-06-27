@@ -26,10 +26,10 @@ spec:
 
   - name: syft
     image: anchore/syft:v1.22.0
-    command: ["cat"]
+    command: ["/syft", "serve"]
 
   - name: grype
-    image: anchore/grype:v0.114.0-nonroot
+    image: anchore/grype:v0.114.0-alpine
     command: ["cat"]
 
   - name: kaniko
