@@ -36,14 +36,20 @@ spec:
   # Официальный debug-образ от Anchore. В нем ЕСТЬ shell и cat!
   - name: syft
     image: anchore/syft:v1.22.0-debug
-    command: ["cat"]
+    command: ["/busybox/sh", "-c", "clear; tail -f /dev/null"]
     tty: true
+    env:
+    - name: PATH
+      value: /busybox:/
 
   # Официальный debug-образ от Anchore. Здесь тоже ЕСТЬ shell и cat!
   - name: grype
     image: anchore/grype:v0.114.0-debug
-    command: ["cat"]
+    command: ["/busybox/sh", "-c", "clear; tail -f /dev/null"]
     tty: true
+    env:
+    - name: PATH
+      value: /busybox:/
 
   # В debug-версии kaniko гарантированно есть shell и cat
   - name: kaniko
