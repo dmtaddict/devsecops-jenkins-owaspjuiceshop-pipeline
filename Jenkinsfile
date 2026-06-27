@@ -81,7 +81,7 @@ pipeline {
                                     gitleaks detect \
                                     --source=/gitleaks \
                                     --report-format=json \
-                                    --report-path=/out/gitleaks-report.json \
+                                    --report-path=reports/gitleaks-report.json \
                                     --exit-code=0
                                 '''
                                 echo "Gitleaks: отчёт сохранён"
@@ -103,7 +103,7 @@ pipeline {
                                 --config=p/owasp-top-ten \
                                 --config=p/security-audit \
                                 --json \
-                                -o /out/semgrep-report.json \
+                                -o reports/semgrep-report.json \
                                 vuln_app
                         '''
                         echo 'Статический анализ кода завершен'
@@ -119,7 +119,7 @@ pipeline {
                     sh '''
                         cd vuln_app
                         npm install --package-lock-only --ignore-scripts 2>/dev/null
-                        npm audit --json --package-lock-only > ../reports/npm-audit.json || true"
+                        npm audit --json --package-lock-only > ../reports/npm-audit.json || true
                         cd ..
                     '''
                     echo 'SCA - npm audit завершен'
@@ -306,7 +306,7 @@ print("Dockerfile пропатчен успешно")
                         python3 - <<'PYEOF'
 import json
 try:
-    data = json.load(open("${WORKSPACE}/reports/gitleaks-report.json"))
+    data = json.load(open("reports/gitleaks-report.json"))
     print(len(data) if isinstance(data, list) else 0)
 except:
     print(-1)
@@ -318,7 +318,7 @@ PYEOF
                     R.trufflehog = sh(returnStdout: true, script: """
                         python3 - <<'PYEOF'
 try:
-    count = sum(1 for line in open("${WORKSPACE}/reports/trufflehog-report.json")
+    count = sum(1 for line in open("reports/trufflehog-report.json")
                 if line.strip() and not line.startswith('time='))
     print(count)
 except:
@@ -331,7 +331,7 @@ PYEOF
                         python3 - <<'PYEOF'
 import json
 try:
-    data    = json.load(open("${WORKSPACE}/reports/grype-report.json"))
+    data    = json.load(open("reports/grype-report.json"))
     matches = data.get("matches", [])
     crit    = sum(1 for m in matches if m.get("vulnerability", {}).get("severity") == "Critical")
     high    = sum(1 for m in matches if m.get("vulnerability", {}).get("severity") == "High")
@@ -348,7 +348,7 @@ PYEOF
                         python3 - <<'PYEOF'
 import json
 try:
-    data  = json.load(open("${WORKSPACE}/reports/trivy-image-report.json"))
+    data  = json.load(open("reports/trivy-image-report.json"))
     vulns = [v for r in data.get("Results", [])
             for v in (r.get("Vulnerabilities") or [])]
     crit  = sum(1 for v in vulns if v.get("Severity") == "CRITICAL")
@@ -366,7 +366,7 @@ PYEOF
                         python3 - <<'PYEOF'
 import json
 try:
-    data   = json.load(open("${WORKSPACE}/reports/zap-report.json"))
+    data   = json.load(open("reports/zap-report.json"))
     alerts = [a for site in data.get("site", [])
                 for a in site.get("alerts", [])]
     high   = sum(1 for a in alerts if int(a.get("riskcode", 0)) >= 3)
@@ -384,7 +384,7 @@ PYEOF
                         python3 - <<'PYEOF'
 import json
 try:
-    data  = json.load(open("${WORKSPACE}/reports/dependency-check-report.json"))
+    data  = json.load(open("reports/dependency-check-report.json"))
     vulns = [v for d in data.get("dependencies", [])
             for v in (d.get("vulnerabilities") or [])]
     print(sum(1 for v in vulns if v.get("severity", "").upper() == "CRITICAL"))
@@ -459,7 +459,13 @@ CRITICAL CVE     : ${fmt(R.depCrit)}  (порог: ${DEPCHECK_CRIT_MAX})   ${ico
             kubectl delete -f juice-shop/ 
         }
         success { echo 'Пайплайн прошёл все проверки успешно' }
-        unstable { echo 'Пайплайн завершён с предупреждениями — проверь отчёты' }
-        failure { echo 'Найдены проблемы. Смотри отчеты.' }
+        unstable {
+            echo 'Пайплайн завершён с предупреждениями — проверь отчёты'
+            sh 'kubectl delete -f juice-shop/ || true'
+            }
+        failure {
+            echo 'Найдены проблемы. Смотри отчеты.'
+            sh 'kubectl delete -f juice-shop/ || true'
+            }
     }
 }
