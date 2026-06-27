@@ -3,8 +3,13 @@ kind: Pod
 metadata:
   labels:
     role: jenkins-agent
+  namespace: devsecops
 spec:
   containers:
+  - name: jnlp
+    image: 'jenkins/inbound-agent'
+    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+
   - name: trufflehog
     image: trufflesecurity/trufflehog:3.88.0
     command: ["tail", "-f", "/dev/null"]
@@ -33,7 +38,6 @@ spec:
     - name: dc-cache
       mountPath: /usr/share/dependency-check/data
 
-  # Официальный debug-образ от Anchore. В нем ЕСТЬ shell и cat!
   - name: syft
     image: anchore/syft:v1.22.0-debug
     command: ["/busybox/sh", "-c", "clear; tail -f /dev/null"]
@@ -42,7 +46,6 @@ spec:
     - name: PATH
       value: /busybox:/
 
-  # Официальный debug-образ от Anchore. Здесь тоже ЕСТЬ shell и cat!
   - name: grype
     image: anchore/grype:v0.114.0-debug
     command: ["/busybox/sh", "-c", "clear; tail -f /dev/null"]
@@ -54,7 +57,7 @@ spec:
   # В debug-версии kaniko гарантированно есть shell и cat
   - name: kaniko
     image: gcr.io/kaniko-project/executor:v1.23.2-debug
-    command: ["cat"]
+    command: ["sleep", "infinity"]
     tty: true
 
   - name: trivy
