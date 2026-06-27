@@ -169,9 +169,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
                     container('grype') {
-                        sh script: '''
-                            /grype reports/sbom-report.json -o json > reports/grype-report.json
-                        ''', shell: '/busybox/sh'
+                        sh script:'/grype reports/sbom-report.json -o json > reports/grype-report.json', shell: '/busybox/sh'
                         echo 'SCA сканирование с помощью Grype завершено'
                     }
                 }
