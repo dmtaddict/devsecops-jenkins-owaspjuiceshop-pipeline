@@ -7,22 +7,22 @@ spec:
   containers:
   - name: trufflehog
     image: trufflesecurity/trufflehog:3.88.0
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
     
   - name: gitleaks
     image: zricethezav/gitleaks:v8.24.2
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
 
   - name: semgrep
     image: semgrep/semgrep:1.114.0
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
 
   - name: dependency-check
     image: owasp/dependency-check:12.1.0
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
     volumeMounts:
     - name: dc-cache
@@ -30,22 +30,22 @@ spec:
 
   - name: syft
     image: anchore/syft:v1.22.0
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
 
   - name: grype
     image: anchore/grype:v0.114.0-nonroot
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
 
   - name: kaniko
     image: gcr.io/kaniko-project/executor:v1.23.2-debug
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
 
   - name: trivy
     image: aquasec/trivy:0.61.0
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
     volumeMounts:
     - name: trivy-cache
@@ -53,7 +53,7 @@ spec:
 
   - name: zap
     image: ghcr.io/zaproxy/zaproxy:2.16.1
-    command: ["sleep"]
+    command: ["cat"]
     args: ["999999"]
 
   volumes:
