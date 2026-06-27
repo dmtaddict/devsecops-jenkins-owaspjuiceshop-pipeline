@@ -20,6 +20,11 @@ spec:
     command: ["sh", "-c", "clear; tail -f /dev/null"]
     tty: true
 
+    - name: npm
+    image: node:20-alpine
+    command: ["sh", "-c", "clear; tail -f /dev/null"]
+    tty: true
+
   - name: dependency-check
     image: owasp/dependency-check:12.1.0
     command: ["tail", "-f", "/dev/null"]
