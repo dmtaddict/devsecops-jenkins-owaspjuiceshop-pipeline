@@ -30,12 +30,12 @@ spec:
 
   - name: syft
     image: anchore/syft:v1.22.0
-    command: ["/syft", "version"]
+    command: ["cat"]
     tty: true
 
   - name: grype
-    image: anchore/grype:v0.114.0-nonroot
-    command: ["/grype", "version"]
+    image: anchore/grype:v0.114.0
+    command: ["cat"]
     tty: true
 
   - name: kaniko
