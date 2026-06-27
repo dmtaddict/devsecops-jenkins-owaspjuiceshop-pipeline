@@ -48,7 +48,7 @@ pipeline {
         stage('2. Клонирование OWASP Juice Shop') {
             when { expression { params.RUN_CLONE } }
             steps {
-                sh 'git clone --depth 1 --branch {IMAGE_TAG} https://github.com/juice-shop/juice-shop.git vuln_app'
+                sh 'git clone --depth 1 --branch ${IMAGE_TAG} https://github.com/juice-shop/juice-shop.git vuln_app'
                 echo 'OWASP Juice Shop получен'
             }
         }
