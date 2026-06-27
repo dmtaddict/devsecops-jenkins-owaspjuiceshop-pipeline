@@ -119,8 +119,7 @@ pipeline {
                     container('npm') {
                         sh '''
                             cd vuln_app
-                            npm install --package-lock-only --ignore-scripts 2>/dev/null
-                            npm audit --json --package-lock-only > ../reports/npm-audit.json || true
+                            npm install --package-lock-only --ignore-scripts 2>/dev/null && npm audit --json --package-lock-only > ../reports/npm-audit.json || true
                             cd ..
                         '''
                         echo 'SCA - npm audit завершен'
